@@ -319,32 +319,12 @@ function TrackObject(job, player, container, color)
 
 
         var html = "<p>What type of object did you just annotate?</p>";
-//       for (var i in job.labels)
-//       {
-//         var id = "classification" + this.id + "_" + i;
-//         html += "<div class='label'><input type='radio' name='classification" + this.id + "' id='" + id + "'> <label for='" + id + "'>" + job.labels[i] + "</label></div>";
-//      }
+
         html += "<div class='label'><input type='text' name='transcription'></div>";
 
         this.classifyinst = $("<div>" + html + "</div>").appendTo(this.handle);
         this.classifyinst.hide().slideDown();
 
-/*       $("input[name='transcription'").click(function() {
-            me.classifyinst.slideUp(null, function() {
-                me.classifyinst.remove();
-            });
-            for (var i in me.job.labels)
-            {
-                var id = "classification" + me.id + "_" + i;
-                if ($("#" + id + ":checked").size() > 0)
-               {
-                      me.finalize(i);
-                      me.statefolddown();
-                        break;
-                    }
-                }
-
-            });*/
         $("input[name='transcription'").on('keydown', function(e){
                 if (e.which == 13) {
                     e.preventDefault();
@@ -366,7 +346,6 @@ function TrackObject(job, player, container, color)
         this.track.transcription = transcription;
 
         this.headerdetails = $("<div style='float:right;'></div>").appendTo(this.handle);
-//        this.header = $("<p class='trackobjectheader'><strong>" + this.job.labels[this.label] + " " + (this.id + 1) + "</strong></p>").appendTo(this.handle).hide().slideDown();
         this.header = $("<p class='trackobjectheader'><strong>" + this.transcription + " (id: " + (this.id + 1) + ")" + "</strong></p>").appendTo(this.handle).hide().slideDown();
         //this.opencloseicon = $('<div class="ui-icon ui-icon-triangle-1-e"></div>').prependTo(this.header);
         this.details = $("<div class='trackobjectdetails'></div>").appendTo(this.handle).hide();
@@ -391,7 +370,6 @@ function TrackObject(job, player, container, color)
 
     this.updateboxtext = function()
     {
-//        var str = "<strong>" + this.job.labels[this.label] + " " + (this.id + 1) + "</strong>";
         var str = "<strong>" + this.transcription + " (id: " + (this.id + 1) + ")" + "</strong>";
 
         var count = 0;
