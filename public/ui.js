@@ -426,7 +426,8 @@ function ui_loadprevious(job, objectui)
         {
             objectui.injectnewobject(data[i]["label"],
                                      data[i]["boxes"],
-                                     data[i]["attributes"]);
+                                     data[i]["attributes"],
+                                     data[i]["transcription"]);
         }
     });
 }

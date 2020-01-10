@@ -92,7 +92,7 @@ function TrackObjectUI(button, container, videoframe, job, player, tracks)
         this.counter++;
     }
 
-    this.injectnewobject = function(label, path, attributes)
+    this.injectnewobject = function(label, path, attributes, transcription)
     {
         console.log("Injecting existing object");
 
@@ -116,7 +116,7 @@ function TrackObjectUI(button, container, videoframe, job, player, tracks)
         }
 
         obj.initialize(this.counter, track, this.tracks);
-        obj.finalize(label);
+        obj.finalize(transcription, label);
 
         for (var i = 0; i < attributes.length; i++)
         {
@@ -205,6 +205,7 @@ function TrackObject(job, player, container, color)
     this.track = null;
     this.tracks = null;
     this.label = null;
+    this.transcription = null; // text annotated by the turker
 
     this.onready = [];
     this.onfolddown = [];
@@ -316,50 +317,57 @@ function TrackObject(job, player, container, color)
             firsti = i;
         }
 
-        if (length == 1)
-        {
-            this.finalize(firsti);
-            this.statefolddown();
-        }
-        else
-        {
-            var html = "<p>What type of object did you just annotate?</p>";
-            for (var i in job.labels)
+
+        var html = "<p>What type of object did you just annotate?</p>";
+//       for (var i in job.labels)
+//       {
+//         var id = "classification" + this.id + "_" + i;
+//         html += "<div class='label'><input type='radio' name='classification" + this.id + "' id='" + id + "'> <label for='" + id + "'>" + job.labels[i] + "</label></div>";
+//      }
+        html += "<div class='label'><input type='text' name='transcription'></div>";
+
+        this.classifyinst = $("<div>" + html + "</div>").appendTo(this.handle);
+        this.classifyinst.hide().slideDown();
+
+/*       $("input[name='transcription'").click(function() {
+            me.classifyinst.slideUp(null, function() {
+                me.classifyinst.remove();
+            });
+            for (var i in me.job.labels)
             {
-                var id = "classification" + this.id + "_" + i;
-                html += "<div class='label'><input type='radio' name='classification" + this.id + "' id='" + id + "'> <label for='" + id + "'>" + job.labels[i] + "</label></div>";
-            }
-
-            this.classifyinst = $("<div>" + html + "</div>").appendTo(this.handle);
-            this.classifyinst.hide().slideDown();
-
-            $("input[name='classification" + this.id + "']").click(function() {
-                me.classifyinst.slideUp(null, function() {
-                    me.classifyinst.remove(); 
-                });
-
-                for (var i in me.job.labels)
-                {
-                    var id = "classification" + me.id + "_" + i;
-                    if ($("#" + id + ":checked").size() > 0)
-                    {
-                        me.finalize(i);
-                        me.statefolddown();
+                var id = "classification" + me.id + "_" + i;
+                if ($("#" + id + ":checked").size() > 0)
+               {
+                      me.finalize(i);
+                      me.statefolddown();
                         break;
                     }
                 }
 
+            });*/
+        $("input[name='transcription'").on('keydown', function(e){
+                if (e.which == 13) {
+                    e.preventDefault();
+                }
+                else{return;}
+                me.classifyinst.slideUp(null, function() {
+                me.classifyinst.remove();
             });
-        }
+                me.finalize(document.getElementsByName('transcription')[0].value, firsti);
+                me.statefolddown();
+        });
     }
     
-    this.finalize = function(labelid)
+    this.finalize = function(transcription, firsti)
     {
-        this.label = labelid;
-        this.track.label = labelid;
+        this.label = firsti;
+        this.track.label = firsti;
+        this.transcription = transcription;
+        this.track.transcription = transcription;
 
         this.headerdetails = $("<div style='float:right;'></div>").appendTo(this.handle);
-        this.header = $("<p class='trackobjectheader'><strong>" + this.job.labels[this.label] + " " + (this.id + 1) + "</strong></p>").appendTo(this.handle).hide().slideDown();
+//        this.header = $("<p class='trackobjectheader'><strong>" + this.job.labels[this.label] + " " + (this.id + 1) + "</strong></p>").appendTo(this.handle).hide().slideDown();
+        this.header = $("<p class='trackobjectheader'><strong>" + this.transcription + " (id: " + (this.id + 1) + ")" + "</strong></p>").appendTo(this.handle).hide().slideDown();
         //this.opencloseicon = $('<div class="ui-icon ui-icon-triangle-1-e"></div>').prependTo(this.header);
         this.details = $("<div class='trackobjectdetails'></div>").appendTo(this.handle).hide();
 
@@ -383,7 +391,8 @@ function TrackObject(job, player, container, color)
 
     this.updateboxtext = function()
     {
-        var str = "<strong>" + this.job.labels[this.label] + " " + (this.id + 1) + "</strong>";
+//        var str = "<strong>" + this.job.labels[this.label] + " " + (this.id + 1) + "</strong>";
+        var str = "<strong>" + this.transcription + " (id: " + (this.id + 1) + ")" + "</strong>";
 
         var count = 0;
         for (var i in this.job.attributes[this.track.label])

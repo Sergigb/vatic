@@ -58,17 +58,19 @@ def getboxesforjob(id):
         attrs = [(x.attributeid, x.frame, x.value) for x in path.attributes]
         result.append({"label": path.labelid,
                        "boxes": [tuple(x) for x in path.getboxes()],
-                       "attributes": attrs})
+                       "attributes": attrs,
+                       "transcription": path.transcription})
     return result
 
 def readpaths(tracks):
     paths = []
     logger.debug("Reading {0} total tracks".format(len(tracks)))
 
-    for label, track, attributes in tracks:
+    for label, track, attributes, transcription in tracks:
         path = Path()
         path.label = session.query(Label).get(label)
-        
+        path.transcription = transcription
+
         logger.debug("Received a {0} track".format(path.label.text))
 
         visible = False

@@ -427,6 +427,7 @@ function Track(player, color, position)
     this.color = color;
     this.htmloffset = 3;
     this.deleted = false;
+    this.transcription = null;
 
     this.onmouseover = [];
     this.onmouseout = [];
@@ -906,7 +907,7 @@ function Track(player, color, position)
         {
             return "";
         }
-        var str = "[" + this.label + "," + this.journal.serialize() + ",{";
+        var str = "[" + this.label + ", " + this.journal.serialize() + ",{";
 
         var length = 0;
         for (var i in this.attributejournals)
@@ -920,7 +921,7 @@ function Track(player, color, position)
             str = str.substr(0, str.length - 1);
         }
 
-        return str += "}]";
+        return str += "}, \"" + this.transcription + "\"]";
     }
 
     /*
