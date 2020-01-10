@@ -723,6 +723,9 @@ class dump(DumpCommand):
                 file.write(" \"")
                 file.write(track.label)
                 file.write("\"")
+                file.write(" \"")
+                file.write(track.paths[0].transcription)
+                file.write("\"")
                 for attr in box.attributes:
                     file.write(" \"")
                     file.write(attr.text)
